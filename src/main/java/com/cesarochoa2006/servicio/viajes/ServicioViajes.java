@@ -31,7 +31,7 @@ public class ServicioViajes {
 			respuesta.setCodigo(RespuestaAPI.ERROR);
 			respuesta.setMensaje(e.getMessage());
 		}
-		return Response.ok(respuesta).build();
+		return Response.ok(respuesta).header("Access-Control-Allow-Origin", "*").build();
 	}
 
 }

@@ -39,7 +39,7 @@ public class CrudPeticion {
 	public Long crearPeticion(PeticionDTO peticion) throws ExcepcionAplicacion {
 		try {
 			if (peticion.getCedula() == null || peticion.getCedula().isEmpty()
-					|| peticion.getCedula().matches("\\d{4,12}")) {
+					|| !peticion.getCedula().matches("\\d{4,12}")) {
 				throw new ExcepcionAplicacion(
 						"La cédula enviada no es correcta, por favor verifique e intente nuevamente");
 			}

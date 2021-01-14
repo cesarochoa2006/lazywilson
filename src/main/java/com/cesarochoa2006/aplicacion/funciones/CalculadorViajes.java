@@ -15,7 +15,6 @@ import com.cesarochoa2006.aplicacion.param.PeticionDTO;
 import com.cesarochoa2006.aplicacion.tipos.ExcepcionAplicacion;
 import com.cesarochoa2006.aplicacion.tipos.ICalculador;
 import com.cesarochoa2006.aplicacion.tipos.IProveedor;
-import com.cesarochoa2006.aplicacion.tipos.ITransformador;
 
 /**
  * Clase que contiene los métodos de aplicación necesarios para calcular los
@@ -26,16 +25,13 @@ import com.cesarochoa2006.aplicacion.tipos.ITransformador;
  * Es un proveedor porque provee la información necesaria para el cálculo de los
  * viajes
  * 
- * Es un transformador porque recibe la data en un string y la transforma al
- * formato del proveedor
- * 
  * Si la complejidad del programa crece se pueden separar las responsabilidades
  * extrayendo cada método a clases aparte
  * 
  * @author cesar
  *
  */
-public class CalculadorViajes implements ITransformador, IProveedor, ICalculador {
+public class CalculadorViajes implements IProveedor, ICalculador {
 	private static final Logger LOG = LoggerFactory.getLogger(CalculadorViajes.class);
 
 	/**
@@ -46,11 +42,11 @@ public class CalculadorViajes implements ITransformador, IProveedor, ICalculador
 	 */
 	public String ejecutar(Archivo archivo) throws ExcepcionAplicacion {
 		try {
-		String base64 = archivo.getObjeto();
+		String data = archivo.getObjeto();
 		// Transformo, proveo y calculo
-		List<String> calculosViajes = calcular(recibir(decodificar(base64)));
+		List<String> calculosViajes = calcular(recibir(data));
 		// Proveo y transformo nuevamente
-		String resultado = codificar(enviar(calculosViajes));
+		String resultado = enviar(calculosViajes);
 		// Si llegué hasta acá agrego el registro
 		PeticionDTO p = new PeticionDTO();
 		p.setCedula(archivo.getCedula());
@@ -67,42 +63,7 @@ public class CalculadorViajes implements ITransformador, IProveedor, ICalculador
 	}
 	
 	
-	/**
-	 * Codifica hacia base64
-	 */
-	@Override
-	public String codificar(String objeto) throws ExcepcionAplicacion {
-		try {
-			// create a new instance of Base64 (Commons Codec)
-			org.apache.commons.codec.binary.Base64 base64 = new org.apache.commons.codec.binary.Base64();
-
-			// Base64 encode
-			byte[] bytes = base64.encode(objeto.getBytes());
-			return new String(bytes, StandardCharsets.UTF_8.name());
-
-		} catch (Exception e) {
-			LOG.error("Ocurrió un error codificando la cadena a base64", e);
-			throw new ExcepcionAplicacion(
-					"Estimado usuario, ocurrió un error generando la respuesta del servicio, por favor intente nuevamente o contacte con el administrador del sistema");
-		}
-
-	}
-
-	/**
-	 * Decodifica de base64
-	 */
-	@Override
-	public String decodificar(String objeto) throws ExcepcionAplicacion {
-		try {
-			byte[] bytes = Base64.getDecoder().decode(objeto);
-			return new String(bytes, StandardCharsets.UTF_8.name());
-		} catch (Exception e) {
-			LOG.error("Ocurrió un error decodificando el archivo enviado", e);
-			throw new ExcepcionAplicacion(
-					"Estimado usuario, ocurrió un error decodificando el archivo enviado, por favor verifique e intente nuevamente");
-		}
-	}
-
+	
 	/**
 	 * Transforma los datos de un string a una lista, extrayendo todos los números
 	 * uno a uno
@@ -111,9 +72,9 @@ public class CalculadorViajes implements ITransformador, IProveedor, ICalculador
 	public List<Integer> recibir(String datos) throws ExcepcionAplicacion {
 		try {
 			List<Integer> resultado = new ArrayList<>();
-			String numDatos = datos.replaceAll("\\s", "");
-			for (int i = 0; i < numDatos.length(); i++) {
-				resultado.add(Integer.parseInt("" + numDatos.charAt(i)));
+			String[] numDatos = datos.replaceAll("\\s", ",").split(",");
+			for (int i = 0; i < numDatos.length; i++) {
+				resultado.add(Integer.parseInt("" + numDatos[i]));
 			}
 			return resultado;
 		} catch (Exception e) {
@@ -151,12 +112,19 @@ public class CalculadorViajes implements ITransformador, IProveedor, ICalculador
 		try {
 			// Extraer T: número de dias que Wilson labora
 			Integer dias = casos.remove(0);
+			int posicionActual = 0;
 			for (int dia = 1; dia <= dias; dia++) {
 				// Extraigo datos de un día particular y calculo los viajes
-				Integer cantidadElementos = casos.get(0);
-				List<Integer> elementosDia = casos.subList(1, cantidadElementos + 1);
-				casos = casos.subList(cantidadElementos + 1, casos.size());
-				resultado.add(String.format("Case#%s: %s", String.valueOf(dia), String.valueOf(calcularViajes(elementosDia))));
+				Integer cantidadElementos = casos.get(posicionActual);
+				posicionActual += 1;
+				List<Integer> elementosDia = new ArrayList<>();
+				while(cantidadElementos > 0) {
+					elementosDia.add(casos.get(posicionActual));
+					posicionActual+=1;
+					cantidadElementos-=1;
+				}
+				resultado.add(String.format("Case #%s: %s", String.valueOf(dia), String.valueOf(calcularViajes(elementosDia))));
+				
 			}
 			return resultado;
 		} catch (Exception e) {
