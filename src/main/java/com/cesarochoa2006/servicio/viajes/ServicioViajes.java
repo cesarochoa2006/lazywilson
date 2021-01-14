@@ -1,6 +1,5 @@
 package com.cesarochoa2006.servicio.viajes;
 
-import javax.ejb.Stateless;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
@@ -15,7 +14,7 @@ import com.cesarochoa2006.aplicacion.tipos.ExcepcionAplicacion;
  * @author cesar
  *
  */
-@Stateless
+
 @Path("viajes")
 public class ServicioViajes {
 

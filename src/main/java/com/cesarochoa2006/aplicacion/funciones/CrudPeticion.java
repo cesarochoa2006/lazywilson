@@ -45,7 +45,10 @@ public class CrudPeticion {
 			}
 			Peticion entidad = peticion.fromDTO(null, em);
 			entidad.setFecha(Calendar.getInstance());
+			em.getTransaction().begin();
 			em.persist(entidad);
+			em.flush();
+			em.getTransaction().commit();
 			return entidad.getId();
 		} catch (ExcepcionAplicacion e) {
 			throw e;
