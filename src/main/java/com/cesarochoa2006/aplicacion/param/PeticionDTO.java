@@ -1,10 +1,12 @@
 package com.cesarochoa2006.aplicacion.param;
 
 import java.io.Serializable;
-import com.cesarochoa2006.modelo.Peticion;
+import java.util.Date;
+
 import javax.persistence.EntityManager;
-import java.util.Calendar;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import com.cesarochoa2006.modelo.Peticion;
 
 @XmlRootElement
 public class PeticionDTO implements Serializable {
@@ -16,7 +18,7 @@ public class PeticionDTO implements Serializable {
 	private Long id;
 	private int version;
 	private String cedula;
-	private Calendar fecha;
+	private Date fecha;
 
 	public PeticionDTO() {
 	}
@@ -65,11 +67,11 @@ public class PeticionDTO implements Serializable {
 		this.cedula = cedula;
 	}
 
-	public Calendar getFecha() {
+	public Date getFecha() {
 		return this.fecha;
 	}
 
-	public void setFecha(final Calendar fecha) {
+	public void setFecha(final Date fecha) {
 		this.fecha = fecha;
 	}
 	

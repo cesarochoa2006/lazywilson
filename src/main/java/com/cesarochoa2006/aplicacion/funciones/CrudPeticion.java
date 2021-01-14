@@ -1,7 +1,7 @@
 package com.cesarochoa2006.aplicacion.funciones;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -44,7 +44,7 @@ public class CrudPeticion {
 						"La cédula enviada no es correcta, por favor verifique e intente nuevamente");
 			}
 			Peticion entidad = peticion.fromDTO(null, em);
-			entidad.setFecha(Calendar.getInstance());
+			entidad.setFecha(new Date());
 			em.getTransaction().begin();
 			em.persist(entidad);
 			em.flush();

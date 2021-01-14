@@ -1,8 +1,8 @@
 package com.cesarochoa2006.aplicacion.funciones;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class CalculadorViajes implements IProveedor, ICalculador {
 		// Si llegué hasta acá agrego el registro
 		PeticionDTO p = new PeticionDTO();
 		p.setCedula(archivo.getCedula());
-		p.setFecha(Calendar.getInstance());
+		p.setFecha(new Date());
 		CrudPeticion crud = new CrudPeticion();
 		crud.crearPeticion(p);
 		return resultado;
